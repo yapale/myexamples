@@ -11,22 +11,18 @@ The installation is using the vagrant account to simplify things.
 3.git installed  ( for windows "git for windows" includes the curl command )
 
 
-##Ice house
-The Icehouse Vagrantfile is[ here ](https://github.com/yapale/vagrant/blob/master/Vagrantfile_icehouse)
-you can use it as below: 
+
+##Centos7
 ```javascript
-curl -s https://raw.githubusercontent.com/yapale/vagrant/master/Vagrantfile_icehouse -o Vagrantfile
+curl -s https://raw.githubusercontent.com/yapale/myexamples/master/vagrant/Vagrantfile -o Vagrantfile
 vagrant up
 ```
 
-##Juno 
-The Juno Vagrantfile is[ here ](https://github.com/yapale/vagrant/blob/master/Vagrantfile_juno)
-you can use it as below: 
+you can ssh 
 ```javascript
-curl -s https://raw.githubusercontent.com/yapale/vagrant/master/Vagrantfile_juno -o Vagrantfile
-vagrant up
+/c/Users/admin/examples/examples/vagrant/.vagrant/machines/centos7/virtualbox
+ssh vagrant@172.28.128.3 -i private_key
 ```
-as Juno is still new , I am currently testing it .
 
 
 ##Contribute
