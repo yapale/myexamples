@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ 
+ 
+# Vagrantfile API/syntax version. Dont touch unless you know what youre doing!
+VAGRANTFILE_API_VERSION = "2"
+$centos7 = <<CENTOS7
+echo "Starting centos"
+CENTOS7
+ 
+# Need to ru npost installation manually
+#sudo apt-get install --no-install-recommends centos7-desktop -y
+ 
+#Run this vagrant by vagrant up -provision
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+ 
+config.vm.define "centos7" do |centos7|
+    centos7.vm.box = "trusty-server"
+    centos7.vm.provision :shell, inline: $centos7, privileged: false
+    centos7.vm.box_url = "https://vagrantcloud.com/matyunin/boxes/centos7/versions/1/providers/virtualbox.box"
+    centos7.vm.hostname = "centos7"
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      #make sure root fs is 30 doesnt work  +not needed as default disk is 40 GB:
+      #v.customize 'pre-boot', ['modifyhd', :id, '--resize', '30000']
+      
+      # optional add second disk  
+      #file_to_disk = '2nd_disk.vdi'
+      #v.customize ['createhd', '--filename', file_to_disk, '--size', 30 * 1024]  
+      #v.customize ['storageattach', :id, '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+    end
+end
+ 
+ 
+end

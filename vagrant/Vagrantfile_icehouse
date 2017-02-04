@@ -1,0 +1,92 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ 
+ 
+# Vagrantfile API/syntax version. Dont touch unless you know what youre doing!
+VAGRANTFILE_API_VERSION = "2"
+$ubuntu = <<UBUNTU
+#follwing commands wont do nothing probably
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install virtualbox-guest-dkms -y
+#end wont do nothing probably
+ 
+sudo apt-get install git -y
+git clone -b stable/icehouse https://github.com/openstack-dev/devstack.git
+#git clone https://github.com/openstack-dev/devstack.git
+cd devstack
+echo 'DEST=/opt/stack
+ 
+# Logging
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+LOG_COLOR=False
+SCREEN_LOGDIR=$DEST/logs/screen
+ 
+# passwords
+ADMIN_PASSWORD=devstack
+MYSQL_PASSWORD=devstack
+RABBIT_PASSWORD=devstack
+SERVICE_PASSWORD=devstack
+SERVICE_TOKEN=tokentoken
+ 
+# versione
+GLANCE_BRANCH=stable/icehouse
+HORIZON_BRANCH=stable/icehouse
+KEYSTONE_BRANCH=stable/icehouse
+NOVA_BRANCH=stable/icehouse
+NEUTRON_BRANCH=stable/icehouse
+HEAT_BRANCH=stable/icehouse
+CEILOMETER_BRANCH=stable/icehouse
+ 
+#Networking Service
+#disable nova network
+DISABLED_SERVICES=n-net
+ENABLED_SERVICES+=,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-metering,neutron
+ 
+# Load Balancing
+ENABLED_SERVICES+=,q-lbaas
+ 
+# Heat 
+ENABLED_SERVICES+=,heat,h-api,h-api-cfn,h-api-cw,h-eng
+HEAT_STANDALONE=True
+ 
+# Ceilometer 
+ENABLED_SERVICES+=,ceilometer-acompute,ceilometer-acentral,ceilometer-collector,ceilometer-api
+ENABLED_SERVICES+=,ceilometer-alarm-notify,ceilometer-alarm-eval
+'>localrc
+
+
+echo "Starting to run stack.sh"
+./stack.sh
+UBUNTU
+ 
+# Need to ru npost installation manually
+#sudo apt-get install --no-install-recommends ubuntu-desktop -y
+ 
+#Run this vagrant by vagrant up -provision
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+ 
+config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.box = "trusty-server"
+    ubuntu.vm.provision :shell, inline: $ubuntu, privileged: false
+    ubuntu.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+    ubuntu.vm.hostname = "ubuntu"
+    #ubuntu.vm.network :forwarded_port, guest: 22, host: 2223
+    ubuntu.vm.network :forwarded_port, guest: 80, host: 9999
+    ubuntu.vm.network :forwarded_port, guest: 6080, host: 6080
+    ubuntu.vm.network :forwarded_port, guest: 5000, host: 5000
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 4096
+      #make sure root fs is 30 doesnt work  +not needed as default disk is 40 GB:
+      #v.customize 'pre-boot', ['modifyhd', :id, '--resize', '30000']
+      
+      # optional add second disk  
+      #file_to_disk = '2nd_disk.vdi'
+      #v.customize ['createhd', '--filename', file_to_disk, '--size', 30 * 1024]  
+      #v.customize ['storageattach', :id, '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]
+    end
+end
+ 
+ 
+end

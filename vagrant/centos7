@@ -1,0 +1,58 @@
+
+vagrant 1.72
+virtual box 4.3.22
+centos 7 box
+
+http://download.virtualbox.org/virtualbox/4.3.22/
+
+The most simple method is to use atlas:
+
+mkdir proj
+vagrant init  # Or vagrant init jkyle/centos-7.0-x86_64
+update the vagrant file with desired box 
+ https://atlas.hashicorp.com/boxes/search
+ for example:jkyle/centos-7.0-x86_64 
+vagrant up
+
+
+Or to customize it as below : 
+
+
+https://github.com/dotless-de/vagrant-vbguest
+vagrant plugin install vagrant-vbguest
+vagrant halt
+vagrant package --base <nameofvm>
+
+vagrant  box add  centos7paz ./centos7paz.box
+
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# in varant 1.72 centos7.vm.box_url = "c:\\box\\centos7.box" is used instead of
+# centos7.vm.box_url = "c:\box\centos7.box"
+ 
+# Vagrantfile API/syntax version. Dont touch unless you know what youre doing!
+VAGRANTFILE_API_VERSION = "2"
+	
+# Need to ru npost installation manually
+#sudo apt-get install --no-install-recommends centos7-desktop -y
+ 
+#Run this vagrant by vagrant up -provision
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+config.vbguest.iso_path = "C:\\Box\\VBoxGuestAdditions_4.3.22.iso"
+
+config.vm.define "centos7" do |centos7|
+    centos7.vm.box = "centos7paz"
+    #centos7.vm.provision :shell, inline: $centos7, privileged: false
+    centos7.vm.network "private_network", :type => 'dhcp'
+    centos7.vm.box_url = "c:\\box\\centos7.box"
+    centos7.vm.hostname = "centos7"
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.name = "centos7new"
+   
+    end
+end
+ 
+ 
+end
