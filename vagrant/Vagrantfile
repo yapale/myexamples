@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ 
+# Vagrantfile API/syntax version. Dont touch unless you know what youre doing!
+VAGRANTFILE_API_VERSION = "2"
+	
+# Need to ru npost installation manually
+#sudo apt-get install --no-install-recommends centos7-desktop -y
+ 
+#Run this vagrant by vagrant up -provision
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+# require plugin installation 
+#vagrant plugin install vagrant-vbguest
+#config.vbguest.iso_path = "C:\\Box\\VBoxGuestAdditions_4.3.22.iso"
+#https://github.com/dotless-de/vagrant-vbguest
+
+config.vm.define "centos7" do |centos7|
+    centos7.vm.box = "centos/7"
+    #centos7.vm.box_url = "c:\\box\\centos7vbox4322v1.box"
+    #centos7.vm.provision :shell, inline: $centos7, privileged: false
+    centos7.vm.network "private_network", :type => 'dhcp'
+    centos7.vm.hostname = "centos7"
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+    end
+end
+end
